@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>茶壶</title>
+</head>
+<body>
+  <script type="module">
+    import * as THREE from '../build/three.module.js';
+    
+    // Dat.gui 是一个 GUI 组件，他可以为你的 demo 提供参数的设置。并且很容易上手。
+    import { GUI } from '../jsm/libs/dat.gui.module.js';
+
+    // 通过Three.js的相机控件OrbitControls.js可以对Threejs的三维场景进行缩放、平移、旋转操作，本质上改变的并不是场景，而是相机的参数，通过前面的学习应该知道，相机的位置角度不同，同一个场景的渲染效果是不一样，比如一个相机绕着一个场景旋转，就像场景旋转一样。
+    import { OrbitControls } from '../jsm/controls/OrbitControls.js';
+    import { TeapotBufferGeometry } from '../jsm/geometries/TeapotBufferGeometry.js';
+  </script>
+</body>
+</html>
