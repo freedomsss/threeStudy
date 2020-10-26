@@ -3,8 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <title>茶壶</title>
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <link type="text/css" rel="stylesheet" href="main.css">
 </head>
 <body>
+  <div id="info">
+    <a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> - the Utah Teapot<br />
+    from <a href="https://www.udacity.com/course/interactive-3d-graphics--cs291" target="_blank" rel="noopener">Udacity Interactive 3D Graphics</a>
+  </div>
   <script type="module">
     import * as THREE from '../build/three.module.js';
     
@@ -14,6 +20,92 @@
     // 通过Three.js的相机控件OrbitControls.js可以对Threejs的三维场景进行缩放、平移、旋转操作，本质上改变的并不是场景，而是相机的参数，通过前面的学习应该知道，相机的位置角度不同，同一个场景的渲染效果是不一样，比如一个相机绕着一个场景旋转，就像场景旋转一样。
     import { OrbitControls } from '../jsm/controls/OrbitControls.js';
     import { TeapotBufferGeometry } from '../jsm/geometries/TeapotBufferGeometry.js';
+    let camera, scene, renderer;
+    let cameraControls;
+    let effectController;
+    const teapotSize = 400;
+    let ambientLight, light;
+    
+    let tess = -1;
+    let bBottom;
+    let bLid;
+    let bBody;
+    let bFitLid;
+    let bNonBlinn;
+    let shading;
+    let wireMaterial, flatMaterial, gouraundMaterial, phongMaterial, texturedMaterial, reflectiveMaterial;
+    
+    let teapot, textureCube;
+    
+    // allocate these just once
+    const diffuseColor = new THREE.Color();
+    const specularColor = new THREE.Color();
+    
+    function init() {
+      const container = document.createElement('div');
+      document.body.appendChild( container );
+      
+      const canvasWidth = window.innerWidth;
+      const canvasHeight = window.innerHeight;
+      
+      
+      // 相机
+      // three.js里有几种不同的相机，在这里，我们使用的是PerspectiveCamera（透视摄像机）。
+      // 第一个参数是视野角度（FOV）。视野角度就是无论在什么时候，你所能在显示器上看到的场景的范围，它的值是角度单位。
+      // 第二个参数是长宽比（aspect ratio）。 也就是你用一个物体的宽除以它的高的值。比如说，当你在一个宽屏电视上播放老电影时，可以看到图像仿佛是被压扁的。
+      // 接下来的两个参数是近截面（near）和远截面（far）。 当物体某些部分比摄像机的远截面远或者比近截面近的时候，该这些部分将不会被渲染到场景中。或许现在你不用担心这个值的影响，但未来为了获得更好的渲染性能，你将可以在你的应用程序里去设置它
+      camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 80000 );
+      camera.position.set( -600, 550, 1300 );
+
+      // LIGHTS 光线
+      // THREE.AmbientLight（环境光）
+      // 在创建 THREE.AmbientLight 时，颜色会应用到全局。
+      // 该光源并没有特别的来源方向，并且 THREE.AmbientLight 不会产生阴影。
+      ambientLight = new THREE.AmbientLight( 0x333333 );	// 0.2
+      // THREE.DirectionalLight平行光可以看作距离很远的光。它发出的所有光线都是平行的。比如太阳光，由于太阳离我们很远，我们可以把太阳的光线看作是平行的。
+      // 与点光源和聚光灯光源的区别
+      //    最大的区别就是，点光源和聚光灯光源距离物体越远光线越暗。光是从一点发出的。
+      //    而被平行光照亮的整个区域接收到的光强是一样的。光是平行的。
+      // 平行光的特点
+      //    由于模型的阴影渲染会消耗很多的性能，所以我们需要设置平行光相关的区域能够显示阴影，和阴影显示的良好程度。
+      light = new THREE.DirectionalLight( 0xFFFFFF, 1.0 );
+      // direction is set in GUI
+
+      // RENDERER 渲染器
+      renderer = new THREE.WebGLRenderer( { antialias: true } );
+      renderer.setPixelRatio( window.devicePixelRatio );
+      renderer.setSize( canvasWidth, canvasHeight );
+      renderer.outputEncoding = THREE.sRGBEncoding;
+      container.appendChild( renderer.domElement );
+
+      // EVENTS
+      window.addEventListener( 'resize', onWindowResize, false );
+
+      // CONTROLS
+      cameraControls = new OrbitControls( camera, renderer.domElement );
+      cameraControls.addEventListener( 'change', render );
+
+      // CONTROLS
+      cameraControls = new OrbitControls( camera, renderer.domElement );
+      cameraControls.addEventListener( 'change', render );
+    }
+
+    // EVENT HANDLERS
+
+    function onWindowResize() {
+
+      const canvasWidth = window.innerWidth;
+      const canvasHeight = window.innerHeight;
+
+      renderer.setSize( canvasWidth, canvasHeight );
+
+      camera.aspect = canvasWidth / canvasHeight;
+      camera.updateProjectionMatrix();
+
+      render();
+
+    }
+    
   </script>
 </body>
 </html>
